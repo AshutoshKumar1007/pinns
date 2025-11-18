@@ -1,0 +1,8 @@
+# Core dependencies for the PINNs project
+# NOTE: Install the appropriate `torch` wheel for your system (CPU or CUDA). Example:
+#  - CPU-only: `pip install torch --index-url https://download.pytorch.org/whl/cpu`
+#  - CUDA: visit https://pytorch.org/ and follow the selector for your CUDA version.
+torch>=1.8.0
+numpy>=1.19
+scipy>=1.5
+matplotlib>=3.1
