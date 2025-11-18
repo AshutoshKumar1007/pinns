@@ -1,0 +1,180 @@
+"C:\Users\viv2j\PycharmProjects\Training Sesson\.venv\Scripts\python.exe" "C:\Users\viv2j\PycharmProjects\Training Sesson\DL4DE\team 2\run_solver.py" 
+--- Solving for Example3.2 ---
+Using device: cuda
+
+--- Neural Network Architecture ---
+NN(
+  (L1): Linear(in_features=2, out_features=50, bias=True)
+  (L2): Linear(in_features=50, out_features=50, bias=True)
+  (L3): Linear(in_features=50, out_features=50, bias=True)
+  (L4): Linear(in_features=50, out_features=50, bias=True)
+  (L5): Linear(in_features=50, out_features=1, bias=True)
+)
+Total trainable parameters: 7851
+-----------------------------------
+
+--- Phase 1: Adam Training (for broad exploration) ---
+Adam Epoch  1000/30000 | Loss: 3.7540e+00 | PDE Res: 1.1945e+00 | LR: 1.00e-04
+Adam Epoch  2000/30000 | Loss: 1.8958e+00 | PDE Res: 7.4626e-01 | LR: 1.00e-04
+Adam Epoch  3000/30000 | Loss: 1.2226e+00 | PDE Res: 5.9795e-01 | LR: 1.00e-04
+Adam Epoch  4000/30000 | Loss: 6.8568e-01 | PDE Res: 3.3916e-01 | LR: 1.00e-04
+Adam Epoch  5000/30000 | Loss: 5.6481e-01 | PDE Res: 2.8190e-01 | LR: 1.00e-04
+Adam Epoch  6000/30000 | Loss: 4.6246e-01 | PDE Res: 2.3443e-01 | LR: 1.00e-04
+Adam Epoch  7000/30000 | Loss: 3.6525e-01 | PDE Res: 1.8650e-01 | LR: 1.00e-04
+Adam Epoch  8000/30000 | Loss: 3.2741e-01 | PDE Res: 1.4852e-01 | LR: 1.00e-04
+Adam Epoch  9000/30000 | Loss: 2.2764e-01 | PDE Res: 1.1309e-01 | LR: 1.00e-04
+Adam Epoch 10000/30000 | Loss: 1.9107e-01 | PDE Res: 9.2444e-02 | LR: 1.00e-04
+Adam Epoch 11000/30000 | Loss: 1.6408e-01 | PDE Res: 7.9403e-02 | LR: 1.00e-04
+Adam Epoch 12000/30000 | Loss: 1.4363e-01 | PDE Res: 6.9820e-02 | LR: 1.00e-04
+Adam Epoch 13000/30000 | Loss: 1.2584e-01 | PDE Res: 6.1615e-02 | LR: 1.00e-04
+Adam Epoch 14000/30000 | Loss: 1.9591e-01 | PDE Res: 5.5566e-02 | LR: 1.00e-04
+Adam Epoch 15000/30000 | Loss: 9.5598e-02 | PDE Res: 4.8369e-02 | LR: 1.00e-04
+Adam Epoch 16000/30000 | Loss: 8.4477e-02 | PDE Res: 4.4151e-02 | LR: 1.00e-04
+Adam Epoch 17000/30000 | Loss: 7.7502e-02 | PDE Res: 4.1052e-02 | LR: 1.00e-04
+Adam Epoch 18000/30000 | Loss: 6.8687e-02 | PDE Res: 3.8521e-02 | LR: 1.00e-04
+Adam Epoch 19000/30000 | Loss: 6.2891e-02 | PDE Res: 3.6145e-02 | LR: 1.00e-04
+Adam Epoch 20000/30000 | Loss: 5.9936e-02 | PDE Res: 3.3832e-02 | LR: 1.00e-04
+Adam Epoch 21000/30000 | Loss: 5.3706e-02 | PDE Res: 3.1659e-02 | LR: 1.00e-04
+Adam Epoch 22000/30000 | Loss: 4.9208e-02 | PDE Res: 2.9636e-02 | LR: 1.00e-04
+Adam Epoch 23000/30000 | Loss: 4.5610e-02 | PDE Res: 2.7873e-02 | LR: 1.00e-04
+Adam Epoch 24000/30000 | Loss: 4.2482e-02 | PDE Res: 2.6382e-02 | LR: 1.00e-04
+Adam Epoch 25000/30000 | Loss: 4.0018e-02 | PDE Res: 2.5172e-02 | LR: 1.00e-04
+Adam Epoch 26000/30000 | Loss: 3.9960e-02 | PDE Res: 2.4345e-02 | LR: 1.00e-04
+Adam Epoch 27000/30000 | Loss: 3.5808e-02 | PDE Res: 2.3399e-02 | LR: 1.00e-04
+Adam Epoch 28000/30000 | Loss: 3.4229e-02 | PDE Res: 2.2708e-02 | LR: 1.00e-04
+Adam Epoch 29000/30000 | Loss: 3.2873e-02 | PDE Res: 2.2099e-02 | LR: 1.00e-04
+Adam Epoch 30000/30000 | Loss: 3.1791e-02 | PDE Res: 2.1566e-02 | LR: 1.00e-04
+
+--- Phase 2: L-BFGS Training (for precision) ---
+L-BFGS Iter     0 | Loss: 3.1813e-02
+L-BFGS Iter   100 | Loss: 2.4940e-02
+L-BFGS Iter   200 | Loss: 2.2144e-02
+L-BFGS Iter   300 | Loss: 1.9822e-02
+L-BFGS Iter   400 | Loss: 1.6310e-02
+L-BFGS Iter   500 | Loss: 1.3574e-02
+L-BFGS Iter   600 | Loss: 1.0907e-02
+L-BFGS Iter   700 | Loss: 9.4921e-03
+L-BFGS Iter   800 | Loss: 8.4624e-03
+L-BFGS Iter   900 | Loss: 7.9572e-03
+L-BFGS Iter  1000 | Loss: 7.4415e-03
+L-BFGS Iter  1100 | Loss: 6.9422e-03
+L-BFGS Iter  1200 | Loss: 6.3806e-03
+L-BFGS Iter  1300 | Loss: 6.0858e-03
+L-BFGS Iter  1400 | Loss: 5.8161e-03
+L-BFGS Iter  1500 | Loss: 5.5151e-03
+L-BFGS Iter  1600 | Loss: 5.2459e-03
+L-BFGS Iter  1700 | Loss: 4.9687e-03
+L-BFGS Iter  1800 | Loss: 4.6478e-03
+L-BFGS Iter  1900 | Loss: 4.5196e-03
+L-BFGS Iter  2000 | Loss: 4.2350e-03
+L-BFGS Iter  2100 | Loss: 3.9812e-03
+L-BFGS Iter  2200 | Loss: 3.8287e-03
+L-BFGS Iter  2300 | Loss: 3.7558e-03
+L-BFGS Iter  2400 | Loss: 3.3841e-03
+L-BFGS Iter  2500 | Loss: 3.2875e-03
+L-BFGS Iter  2600 | Loss: 3.2197e-03
+L-BFGS Iter  2700 | Loss: 3.1227e-03
+L-BFGS Iter  2800 | Loss: 3.0249e-03
+L-BFGS Iter  2900 | Loss: 2.9533e-03
+Training finished in 3677.08 seconds.
+
+--- Evaluation ---
+
+--- Summary Report ---
+Example: Example3.2
+Computation Time: 3677.08 s
+Final Loss: 2.8825e-03
+L2 Relative Error: 2.0665e-01
+H1 Relative Error: 3.5027e-01
+H2 Relative Error: 3.5480e-01
+----------------------
+Plots saved to 'results_Example3_2' directory.
+
+
+================================================================================
+
+
+--- Solving for Example3.1 ---
+Using device: cuda
+
+--- Neural Network Architecture ---
+NN(
+  (L1): Linear(in_features=2, out_features=50, bias=True)
+  (L2): Linear(in_features=50, out_features=50, bias=True)
+  (L3): Linear(in_features=50, out_features=50, bias=True)
+  (L4): Linear(in_features=50, out_features=50, bias=True)
+  (L5): Linear(in_features=50, out_features=1, bias=True)
+)
+Total trainable parameters: 7851
+-----------------------------------
+
+--- Phase 1: Adam Training (for broad exploration) ---
+Adam Epoch  1000/30000 | Loss: 2.1551e+01 | PDE Res: 1.7639e+01 | LR: 1.00e-04
+Adam Epoch  2000/30000 | Loss: 2.2051e+00 | PDE Res: 1.0332e+00 | LR: 1.00e-04
+Adam Epoch  3000/30000 | Loss: 7.4496e-01 | PDE Res: 2.5101e-01 | LR: 1.00e-04
+Adam Epoch  4000/30000 | Loss: 3.4962e-01 | PDE Res: 1.6211e-01 | LR: 1.00e-04
+Adam Epoch  5000/30000 | Loss: 2.1970e-01 | PDE Res: 1.0851e-01 | LR: 1.00e-04
+Adam Epoch  6000/30000 | Loss: 1.6093e-01 | PDE Res: 8.3832e-02 | LR: 1.00e-04
+Adam Epoch  7000/30000 | Loss: 1.2573e-01 | PDE Res: 7.0015e-02 | LR: 1.00e-04
+Adam Epoch  8000/30000 | Loss: 1.0243e-01 | PDE Res: 5.9706e-02 | LR: 1.00e-04
+Adam Epoch  9000/30000 | Loss: 9.0130e-02 | PDE Res: 5.2188e-02 | LR: 1.00e-04
+Adam Epoch 10000/30000 | Loss: 7.3487e-02 | PDE Res: 4.5886e-02 | LR: 1.00e-04
+Adam Epoch 11000/30000 | Loss: 6.2924e-02 | PDE Res: 4.0470e-02 | LR: 1.00e-04
+Adam Epoch 12000/30000 | Loss: 5.4523e-02 | PDE Res: 3.5683e-02 | LR: 1.00e-04
+Adam Epoch 13000/30000 | Loss: 4.7307e-02 | PDE Res: 3.1459e-02 | LR: 1.00e-04
+Adam Epoch 14000/30000 | Loss: 4.1355e-02 | PDE Res: 2.7902e-02 | LR: 1.00e-04
+Adam Epoch 15000/30000 | Loss: 3.6539e-02 | PDE Res: 2.5002e-02 | LR: 1.00e-04
+Adam Epoch 16000/30000 | Loss: 4.4607e-02 | PDE Res: 2.2962e-02 | LR: 1.00e-04
+Adam Epoch 17000/30000 | Loss: 2.9659e-02 | PDE Res: 2.0843e-02 | LR: 1.00e-04
+Adam Epoch 18000/30000 | Loss: 9.9093e-02 | PDE Res: 2.0556e-02 | LR: 1.00e-04
+Adam Epoch 19000/30000 | Loss: 2.5158e-02 | PDE Res: 1.8057e-02 | LR: 1.00e-04
+Adam Epoch 20000/30000 | Loss: 2.3203e-02 | PDE Res: 1.6923e-02 | LR: 1.00e-04
+Adam Epoch 21000/30000 | Loss: 2.1641e-02 | PDE Res: 1.5914e-02 | LR: 1.00e-04
+Adam Epoch 22000/30000 | Loss: 3.4456e-02 | PDE Res: 1.5267e-02 | LR: 1.00e-04
+Adam Epoch 23000/30000 | Loss: 6.3670e-02 | PDE Res: 1.5382e-02 | LR: 1.00e-04
+Adam Epoch 24000/30000 | Loss: 1.7838e-02 | PDE Res: 1.3436e-02 | LR: 1.00e-04
+Adam Epoch 25000/30000 | Loss: 1.8723e-02 | PDE Res: 1.2704e-02 | LR: 1.00e-04
+Adam Epoch 26000/30000 | Loss: 1.8080e-02 | PDE Res: 1.2209e-02 | LR: 1.00e-04
+Adam Epoch 27000/30000 | Loss: 1.5016e-02 | PDE Res: 1.1519e-02 | LR: 1.00e-04
+Adam Epoch 28000/30000 | Loss: 1.6797e-02 | PDE Res: 1.1025e-02 | LR: 1.00e-04
+Adam Epoch 29000/30000 | Loss: 1.3839e-02 | PDE Res: 1.0451e-02 | LR: 1.00e-04
+Adam Epoch 30000/30000 | Loss: 1.3393e-02 | PDE Res: 1.0015e-02 | LR: 1.00e-04
+
+--- Phase 2: L-BFGS Training (for precision) ---
+L-BFGS Iter     0 | Loss: 1.3315e-02
+L-BFGS Iter   100 | Loss: 6.9092e-03
+L-BFGS Iter   200 | Loss: 4.7948e-03
+L-BFGS Iter   300 | Loss: 3.1434e-03
+L-BFGS Iter   400 | Loss: 2.1803e-03
+L-BFGS Iter   500 | Loss: 1.3823e-03
+L-BFGS Iter   600 | Loss: 1.1262e-03
+L-BFGS Iter   700 | Loss: 9.1193e-04
+L-BFGS Iter   800 | Loss: 6.8306e-04
+L-BFGS Iter   900 | Loss: 5.4509e-04
+L-BFGS Iter  1000 | Loss: 4.9596e-04
+L-BFGS Iter  1100 | Loss: 4.0593e-04
+L-BFGS Iter  1200 | Loss: 3.6219e-04
+L-BFGS Iter  1300 | Loss: 3.0849e-04
+L-BFGS Iter  1400 | Loss: 2.6966e-04
+L-BFGS Iter  1500 | Loss: 2.3534e-04
+L-BFGS Iter  1600 | Loss: 2.0833e-04
+L-BFGS Iter  1700 | Loss: 1.7696e-04
+L-BFGS Iter  1800 | Loss: 1.5801e-04
+L-BFGS Iter  1900 | Loss: 1.3888e-04
+L-BFGS Iter  2000 | Loss: 1.2905e-04
+L-BFGS Iter  2100 | Loss: 1.0254e-04
+Training finished in 3466.22 seconds.
+
+--- Evaluation ---
+
+--- Summary Report ---
+Example: Example3.1
+Computation Time: 3466.22 s
+Final Loss: 9.9044e-05
+L2 Relative Error: 1.9286e-03
+H1 Relative Error: 3.6912e-03
+H2 Relative Error: 6.5490e-03
+----------------------
+Plots saved to 'results_Example3_1' directory.
+
+Process finished with exit code 0
