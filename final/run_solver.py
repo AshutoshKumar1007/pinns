@@ -75,7 +75,7 @@ def solve_pde(config):
 
     tensors_to_device = [tintx1, tintx2, tbdx1, tbdx2, tnx1, tnx2, f, bdry_dir, bdry_neu]
     tintx1, tintx2, tbdx1, tbdx2, tnx1, tnx2, f, bdry_dir, bdry_neu = [t.to(config.device) for t in tensors_to_device]
-    tintx1.requires_grad_(True);
+    tintx1.requires_grad_(True)
     tintx2.requires_grad_(True)
 
     start_time = time.time()
@@ -170,11 +170,11 @@ def solve_pde(config):
     plt.figure(figsize=(8, 5))
     plt.plot(loss_history)
     plt.axvline(x=config.adam_epochs, color='r', linestyle='--', label='Switched to L-BFGS')
-    plt.yscale('log');
-    plt.title(f'Loss History ({config.example_name})');
-    plt.xlabel('Iteration');
-    plt.ylabel('Loss');
-    plt.grid(True);
+    plt.yscale('log')
+    plt.title(f'Loss History ({config.example_name})')
+    plt.xlabel('Iteration')
+    plt.ylabel('Loss')
+    plt.grid(True)
     plt.legend()
     plt.savefig(os.path.join(config.results_dir, "loss_history.png"))
     plt.close()
@@ -189,8 +189,8 @@ def solve_pde(config):
         ax = axes[i]
         im = ax.pcolormesh(ms_x, ms_y, data, cmap='jet', shading='auto', vmin=v_min if i < 2 else None,
                            vmax=v_max if i < 2 else None)
-        ax.set_title(title);
-        ax.set_xlabel('$x_1$');
+        ax.set_title(title)
+        ax.set_xlabel('$x_1$')
         ax.set_aspect('equal', 'box')
         if i == 0: ax.set_ylabel('$x_2$')
         fig.colorbar(im, ax=ax)
@@ -206,8 +206,8 @@ def solve_pde(config):
     pinn_sol_grid = pinn_derivs['u'].reshape(res, res)
     surf1 = ax1.plot_surface(ms_x, ms_y, pinn_sol_grid, cmap='jet', edgecolor='none')
     ax1.set_title("PINN Computed Solution")
-    ax1.set_xlabel('$x_1$');
-    ax1.set_ylabel('$x_2$');
+    ax1.set_xlabel('$x_1$')
+    ax1.set_ylabel('$x_2$')
     ax1.set_zlabel('u(x,y)')
     fig.colorbar(surf1, ax=ax1, shrink=0.7, aspect=10)
 
@@ -215,8 +215,8 @@ def solve_pde(config):
     exact_sol_grid = gt_vals['u'].reshape(res, res)
     surf2 = ax2.plot_surface(ms_x, ms_y, exact_sol_grid, cmap='jet', edgecolor='none')
     ax2.set_title("Exact Solution")
-    ax2.set_xlabel('$x_1$');
-    ax2.set_ylabel('$x_2$');
+    ax2.set_xlabel('$x_1$')
+    ax2.set_ylabel('$x_2$')
     ax2.set_zlabel('u(x,y)')
     fig.colorbar(surf2, ax=ax2, shrink=0.7, aspect=10)
 

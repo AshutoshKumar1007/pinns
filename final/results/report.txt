@@ -1,0 +1,52 @@
+PINNs — Phase I Mini-Report
+Project: Biharmonic PINNs (Examples 3.1 & 3.2)
+
+Summary (concise)
+- We used a single network architecture for both Example 3.1 and Example 3.2: a feed-forward NN with 5 linear layers (2 -> 50 -> 50 -> 50 -> 50 -> 1) and Tanh activations between hidden layers. Total trainable parameters: 7851.
+- Training flow: ADAM for broad exploration (30k epochs) followed by L-BFGS fine-tuning (iterative). All code for both examples is placed in the same script and selected via a `Config(example_name=...)`.
+
+Results (from training logs)
+- Example 3.2 (folder `results_Example3_2`):
+  - Device: cuda
+  - Training time: 3677.08 s
+  - Final Loss: 2.8825e-03
+  - Relative errors: L2 = 2.0665e-01, H1 = 3.5027e-01, H2 = 3.5480e-01
+
+- Example 3.1 (folder `results_Example3_1`):
+  - Device: cuda
+  - Training time: 3466.22 s
+  - Final Loss: 9.9044e-05
+  - Relative errors: L2 = 1.9286e-03, H1 = 3.6912e-03, H2 = 6.5490e-03
+
+Mapping the required five components to the code (location & notes)
+1) Save trained network for later use
+   - Status: Not saved by default in the current `final/run_solver.py`.
+
+2) Compute training time, print architecture, and count nonzero parameters (n_L)
+   - Status: architecture and total trainable parameter count are printed already (see `print(net)` and `sum(p.numel() for p in net.parameters())` in `final/run_solver.py`). Training time is computed and printed (`computation_time`).
+   
+
+3) Plotting (exact u, PINN u_theta, and pointwise error)
+   - Status: Implemented. `final/run_solver.py` saves `solution_comparison.png` (exact, PINN, absolute error) and a 3D surface `solution_3d_surface.png` in the `results_*` folder.
+
+4) Compute errors: L2, H1, H2 and relative versions
+   - Status: Implemented. The script computes and prints relative L2, H1 and H2 errors in the summary report.
+
+5) Saving loss history and plotting
+   - Status: the script collects `loss_history` (Adam + L-BFGS) and plots it (`loss_history.png`) in the results folder, but does not save the raw numeric history to disk.
+   
+Files to inspect (final submission)
+- `final/run_solver.py`   — training loop, printing, plotting, evaluation (examples selected via `Config`).
+- `final/model_og.py`     — network implementation & init used by `run_solver.py`.
+- `final/pde.py`         — PINN residual and boundary evaluation / loss assembly.
+- `final/generate_data.py` — dataset generation for both examples.
+- `final/g_tr_ex3_1.py`, `final/g_tr_ex3_2.py` — ground-truth generators used to compute exact solution and forcing terms.
+
+Notes and small recommendations (for final submission)
+- The code already follows the algorithmic steps discussed in class: (1) sample interior & boundary points, (2) forward pass, (3) compute PDE residual and BC residual, (4) assemble loss, (5) optimize (ADAM then L-BFGS), (6) evaluate & plot. For clarity, add short commented markers in `run_solver.py` above each block, e.g. `# --- Step 1: sample data`, `# --- Step 2: forward pass & derivatives`, etc. (This makes it easy for faculty to map code to algorithm steps.)
+- Although the same network architecture was used for both examples (single code path), we keep separate result folders (`results_Example3_1`, `results_Example3_2`) and dataset files so submission contains both runs.
+
+Conclusion (one paragraph)
+- The Phase I codebase is compact and implements the core PINN workflow for both Example 3.1 and 3.2 using the same NN architecture. All evaluation and plotting components are implemented and produce the required figures; relative errors and training times are reported above. 
+
+Prepared by: Team 2 — final folder; Date: 20-Nov-2025
