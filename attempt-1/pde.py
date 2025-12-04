@@ -71,6 +71,14 @@ def pdeloss(net,intx1,intx2,pdedata,bdx1,bdx2,nx1,nx2,bdrydata_diri,bdrydat_neum
 
     return loss, pres, bres, diri_loss, neumann_loss
 
-
-
+def pde_loss2(net,intx1,intx2,pdedata,bdx1,bdx2,nx1,nx2,bdrydata_diri,bdrydat_neumann,bw_diri,bw_neumann):
+    bdx1  = bdx1.detach().requires_grad_(True)
+    bdx2  = bdx2.detach().requires_grad_(True)
+    pout = pde(intx1,intx2,net)
+    #print("pout[50:150]=\n",pout[50:100])
+    bout_diri,bout_neumann = bdry(bdx1,bdx2,nx1,nx2,net)
+    pres = mse_loss(pout,pdedata)
+    bres = bw_diri*mse_loss(bout_diri,bdrydata_diri) + bw_neumann*mse_loss(bout_neumann,bdrydat_neumann)
+    diri_loss = mse_loss(bout_diri,bdrydata_diri)
+    neumann_loss = mse_loss(bout_neumann,bdrydat_neumann)
 
