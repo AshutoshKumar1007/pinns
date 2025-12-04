@@ -46,7 +46,7 @@ def data_gen_interior(collocations):
 
 def data_gen_bdry(collocations, normal_vec):
     ybdry_vals = []
-    neumann_vals = [] # This is g2 = ∂²u/∂n²
+    neumann_vals = [] # This is g2 = ∂²u/ ∂n²
     for (x, y), (n1, n2) in zip(collocations, normal_vec):
         ybdry_vals.append(ldy(x, y))
         u_xx = ldy_xx(x, y)
