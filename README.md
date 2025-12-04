@@ -1,67 +1,239 @@
-# PINNs (Physics-Informed Neural Networks) — Biharmonic Examples
+# Physics-Informed Neural Networks (PINNs) for Biharmonic PDEs
 
-Minimal project implementing PINNs for biharmonic PDE examples (Example 3.1 and Example 3.2).
+Implementation of Physics-Informed Neural Networks (PINNs) and Deep Ritz Method (DRM) for solving fourth-order biharmonic partial differential equations.
 
-Quick summary
-- Purpose: train neural networks to satisfy a biharmonic PDE and boundary conditions using automatic differentiation.
-- Primary code lives inside the `attempt-1` and `attempt-2` folders (two training attempts / variations).
+## Table of Contents
+- [Overview](#overview)
+- [Problem Formulation](#problem-formulation)
+- [Phase I: PINNs Implementation](#phase-i-pinns-implementation)
+- [Phase II: Deep Ritz Method (DRM)](#phase-ii-deep-ritz-method)
+- [Project Structure](#project-structure)
+- [Installation & Usage](#installation--usage)
+- [Results Summary](#results-summary)
+- [Team](#team)
+- [License](#license)
 
-Requirements
-- Create a Python virtual environment and install dependencies:
+## Overview
+
+This project implements two approaches:
+
+1. **Phase I - PINNs**: Direct enforcement of PDE residuals and boundary conditions through the loss function 
+2. **Phase II - Deep Ritz Method (DRM)**: Variational energy minimization (see [DRMFinal/README.md](DRMFinal/README.md))
+
+Both leverage automatic differentiation to compute high-order derivatives for fourth-order PDEs.
+
+## Problem Formulation
+
+We solve the biharmonic equation on the unit square domain $\Omega = [0,1] \times [0,1]$:
+
+$$\Delta^2 u = f \quad \text{in } \Omega$$
+
+with boundary conditions:
+- **Dirichlet**: $u = g_1$ on $\partial\Omega$
+- **Neumann (Second Normal Derivative)**: $\frac{\partial^2 u}{\partial n^2} = g_2$ on $\partial\Omega$
+
+where $\Delta^2 u = (u_{xx} + u_{yy})_{xx} + (u_{xx} + u_{yy})_{yy}$ is the biharmonic operator.
+
+## Phase I: PINNs Implementation
+
+### Methodology
+
+The PINN approach directly minimizes the PDE residual at collocation points:
+
+$$\mathcal{L} = \mathcal{L}_{\text{PDE}} + \lambda_{\text{dir}} \mathcal{L}_{\text{Dirichlet}} + \lambda_{\text{neu}} \mathcal{L}_{\text{Neumann}}$$
+
+where:
+- $\mathcal{L}_{\text{PDE}} = \text{MSE}(\Delta^2 u_\theta - f)$ at interior points
+- $\mathcal{L}_{\text{Dirichlet}} = \text{MSE}(u_\theta - g_1)$ at boundary points
+- $\mathcal{L}_{\text{Neumann}} = \text{MSE}(\frac{\partial^2 u_\theta}{\partial n^2} - g_2)$ at boundary points
+
+### Network Architecture
+
+**Feed-Forward Neural Network**:
+- **Input Layer**: 2 neurons $(x, y)$ coordinates
+- **Hidden Layers**: 4 layers × 50 neurons each
+- **Output Layer**: 1 neuron (solution $u$)
+- **Activation Function**: Tanh (smooth derivatives for high-order PDEs)
+- **Total Parameters**: 7,851 trainable parameters
+- **Weight Initialization**: Xavier uniform
+
+### Training Strategy
+
+**Two-Phase Optimization**:
+1. **Adam Optimizer** (30,000 epochs):
+   - Learning rate: $10^{-4}$ with ReduceLROnPlateau scheduler
+   - Broad exploration of solution space
+   - Fast convergence to approximate solution
+
+2. **L-BFGS Optimizer** (up to 10,000 iterations):
+   - Quasi-Newton method for precision refinement
+   - Strong Wolfe line search
+   - Fine-tuning near optimum
+
+### Hyperparameters
+
+- Interior collocation points: 5,000
+- Boundary collocation points: 4,000
+- Dirichlet penalty weight: $\lambda_{\text{dir}} = 5000$
+- Neumann penalty weight: $\lambda_{\text{neu}} = 5000$
+
+### Implementation Details
+
+**Key Files** (`final/` directory):
+- `run_solver.py` - Main training loop with evaluation and visualization
+- `model.py` - Neural network architecture and weight initialization
+- `pde.py` - PDE residual computation and loss assembly using automatic differentiation
+- `generate_data.py` - Collocation point sampling and ground truth generation
+- `g_tr_ex3_1.py`, `g_tr_ex3_2.py` - Exact solutions using SymPy for symbolic differentiation
+- `tools.py` - Utility functions for tensor conversions
+
+### Phase I Results
+
+| Example | L² Error | H¹ Error | H² Error | Training Time | Final Loss |
+|---------|----------|----------|----------|---------------|------------|
+| 3.1     | 1.93e-03 | 3.69e-03 | 6.55e-03 | 3,466 s (~58 min) | 9.90e-05 |
+| 3.2     | 2.07e-01 | 3.50e-01 | 3.55e-01 | 3,677 s (~61 min) | 2.88e-03 |
+
+**Note**: Example 3.2 shows higher errors due to its complex polynomial structure $u \sim x^2 y^2 (1-x)^2 (1-y)^2$ with a very small functional range near zero, making it challenging for neural network approximation.
+
+### Outputs
+
+Training generates the following in `results_Example*/` directories:
+- `solution_comparison.png` - Side-by-side comparison: exact solution, PINN prediction, absolute error
+- `solution_3d_surface.png` - 3D visualization of the solution
+- `loss_history.png` - Training loss convergence plot (Adam + L-BFGS phases)
+- `results-*.txt` - Detailed training logs and error metrics
+
+## Phase II: Deep Ritz Method
+
+Phase II implements a variational energy minimization approach with U-shaped neural networks and uncertainty-weighted multi-task learning.
+
+**📂 For complete DRM documentation, methodology, and results, see [DRMFinal/README.md](DRMFinal/README.md)**
+
+**Quick Facts**:
+- U-shaped FCN architecture: [2]→[64]→[128]→[256]→[256]→[128]→[64]→[1]
+- Energy functional minimization with Dirichlet penalty
+- Jupyter notebooks with pre-trained checkpoints available
+- Hard constraint at center point $(0.5, 0.5)$ was imposed to help the network understand the functional range
+- DRM achieved superior L² accuracy on Example 3.2 compared to PINNs
+- Training time: 3-4 hours on GPU
+
+## Test Examples
+
+### Example 3.1:
+$$u(x_1, x_2) = \frac{1}{2\pi^2} \sin(\pi x_1) \sin(\pi x_2)$$
+- Smooth sinusoidal solution with well-behaved derivatives and functional range.
+- Both PINNs and DRM achieve excellent accuracy
+
+### Example 3.2:
+$$u(x_1, x_2) = x_1^2 x_2^2 (1-x_1)^2 (1-x_2)^2$$
+
+- Complex polynomial with very small functional range (max ≈ $2.5 \times 10^{-4}$), challenging for neural networks.
+- Challenging for neural networks due to scale.
+- DRM outperforms PINNs in L² norm, while PINNs excel in higher-order derivatives.
+
+## Project Structure
+
+```
+pinns/
+├── final/                          # Phase I: PINNs (Final Implementation)
+│   ├── run_solver.py              # Main training script
+│   ├── model.py                   # Neural network architecture
+│   ├── pde.py                     # PDE residual and loss computation
+│   ├── generate_data.py           # Dataset generation
+│   ├── g_tr_ex3_1.py              # Exact solution for Example 3.1
+│   ├── g_tr_ex3_2.py              # Exact solution for Example 3.2
+│   ├── tools.py                   # Utility functions
+│   ├── dataset/                   # Generated collocation points
+│   └── results/                   # Training outputs and plots
+│       ├── results_Example3_1/
+│       └── results_Example3_2/
+│
+├── DRMFinal/                      # Phase II: Deep Ritz Method
+│   ├── README.md                  # Detailed DRM documentation
+│   ├── notebooks/                 # Jupyter notebooks
+│   │   ├── Example3.1DRM.ipynb
+│   │   └── Example3.2DRM.ipynb
+│   ├── checkpoints/               # Pre-trained models
+│   └── DRM_old/                   # Experimental code
+│
+├── Notebooks/                     # Additional experiments
+│   ├── P2example1.ipynb           # Example 1 notebook
+│   ├── P2example2.ipynb           # Example 2 notebook
+│   ├── biharmonic_pinns_version2/ # Checkpoints
+│   └── Q2biharmonic_pinns/        # Additional checkpoints
+│
+├── attempt-1/                     # Earlier PINN attempts
+├── attempt-2/                     # Earlier PINN attempts
+├── requirements.txt               # Python dependencies
+├── LICENSE                        # MIT License
+└── README.md                      # This file
+```
+
+## Installation & Usage
+
+### Quick Start
 
 ```powershell
-python -m venv .venv; .\.venv\Scripts\Activate.ps1
+# Clone and setup
+git clone https://github.com/AshutoshKumar1007/pinns.git
+cd pinns
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-# Install torch separately if you need a CUDA-enabled wheel; see https://pytorch.org/
+
+# Install PyTorch (GPU)
+pip install torch --index-url https://download.pytorch.org/whl/cu118
+
+# Run PINNs (Phase I)
+cd final
+python generate_data.py          # Generate collocation points
+python run_solver.py             # Train & evaluate
+
+# Run DRM (Phase II)
+cd ../DRMFinal/notebooks
+jupyter notebook Example3.1DRM.ipynb
 ```
 
-Quick start
-- Generate datasets (saves `dataset/*` files):
+**Configuration**: Edit `Config` class in `final/run_solver.py` to select example and adjust hyperparameters.
 
-```powershell
-python attempt-1/generate_data.py
-# or
-python attempt-2/generate_data.py
-```
+**Dependencies**: `torch`, `numpy`, `scipy`, `matplotlib`, `sympy` (see `requirements.txt`)
 
-- Run the solver (example):
+## Results Summary
 
-```powershell
-python attempt-1/run_solver.py
-# or to run attempt-2
-python attempt-2/run_solver.py
-```
+| Method | Example | L² Error | H¹ Error | H² Error | Time (GPU) |
+|--------|---------|----------|----------|----------|------------|
+| **PINNs** | 3.1 | **1.93e-03** | **3.69e-03** | **6.55e-03** | ~1 hour |
+| **DRM**   | 3.1 | 2.13e-03 | 9.16e-02 | 1.11e-01 | ~4 hours |
+| **PINNs** | 3.2 | 2.07e-01 | 3.50e-01 | 3.55e-01 | ~1 hour |
+| **DRM**   | 3.2 | **5.97e-04** | 5.05e-01 | 8.46e-01 | ~3 hours |
 
-Key files
-- `attempt-1/run_solver.py` — main training/evaluation script for Example 3.1 / 3.2
-- `attempt-1/model.py` — network architecture and weight init
-- `attempt-1/pde.py` — PDE residuals and loss assembly
-- `attempt-1/generate_data.py` — generates interior and boundary samples and ground truth
-- `attempt-1/tools.py` — small helper to convert numpy arrays to torch tensors
+**Key Observations**:
+- PINNs: Faster training, better on smooth solutions (Example 3.1), superior higher-order derivatives
+- DRM: Better L² accuracy on complex polynomials (Example 3.2), principled variational framework
+- Example 3.2's tiny functional range challenges both methods
 
-Notes
-- The repository uses PyTorch for automatic differentiation. Choose the correct `torch` wheel for CUDA if you want GPU acceleration.
-- Datasets are stored under `attempt-1/dataset/` and `attempt-2/dataset/` after running `generate_data.py`.
+**Generated Outputs** (in `final/results_Example*/` and `DRMFinal/checkpoints/`):
+- Solution comparison plots, 3D visualizations, loss history, training logs, pre-trained models
 
-License
-- This project is provided under the MIT License — see the `LICENSE` file.
+## Team
 
-Notebooks
-- Location: `Notebooks/` contains Jupyter notebooks and a couple of pre-trained checkpoint folders.
-- What you'll find:
-	- `P2example1.ipynb`, `P2example2.ipynb` — example notebooks demonstrating training, evaluation and plotting for the biharmonic PINNs.
-	- `biharmonic_pinns_version2/` and `Q2biharmonic_pinns/` — checkpoints (PyTorch `.pt` files) saved from earlier runs. These are large model files kept for convenience.
-- How to use:
-	- Start Jupyter Lab/Notebook and open one of the notebooks:
+**Group 2** - Deep Learning for Differential Equations
 
-```powershell
-jupyter lab
-# or
-jupyter notebook Notebooks/P2example2.ipynb
-```
+**Contributors**:
+- [AshutoshKumar1007](https://github.com/AshutoshKumar1007)
+- [c0mpl1cat3d1](https://github.com/c0mpl1cat3d1)
+- [varshini1782006](https://github.com/varshini1782006)
+- [jainsarthak0205](https://github.com/jainsarthak0205)
+- [Gowravsharma](https://github.com/Gowravsharma)
+- [Gouse2005](https://github.com/Gouse2005)	
+- [--- IGNORE ---](--- IGNORE ---)
 
-	- The notebooks are runnable end-to-end if you have the same Python environment and the required checkpoints available in the `Notebooks/` subfolders. If a checkpoint is missing, the notebooks usually include code cells to train from scratch (long-running).
+## License
 
-Notes about checkpoints
-- Model checkpoint files are large and may not be included in some clones of this repository (or may be managed separately). If a notebook expects a `.pt` file and it is missing, either run the training cell in the notebook or copy the checkpoint into the appropriate `Notebooks/*` folder.
+MIT License - see [LICENSE](LICENSE) file. Copyright (c) 2025 Group 2.
+
+---
+
+**Note**: `attempt-1/` and `attempt-2/` document development iterations. Final implementations: `final/` (PINNs) and `DRMFinal/` (DRM with detailed README).
 
