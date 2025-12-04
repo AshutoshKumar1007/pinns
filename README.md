@@ -32,7 +32,22 @@ with boundary conditions:
 - **Dirichlet**: $u = g_1$ on $\partial\Omega$
 - **Neumann (Second Normal Derivative)**: $\frac{\partial^2 u}{\partial n^2} = g_2$ on $\partial\Omega$
 
-where $\Delta^2 u = (u_{xx} + u_{yy})_{xx} + (u_{xx} + u_{yy})_{yy}$ is the biharmonic operator.
+where $\Delta^2 u = \frac{\partial^4 u}{\partial x^4} + 2\frac{\partial^4 u}{\partial x^2 \partial y^2} + \frac{\partial^4 u}{\partial y^4}$ is the biharmonic (fourth-order) operator.
+
+## Test Examples
+
+### Example 3.1:
+$$u(x_1, x_2) = \frac{1}{2\pi^2} \sin(\pi x_1) \sin(\pi x_2)$$
+- Smooth sinusoidal solution with well-behaved derivatives and functional range.
+- Both PINNs and DRM achieve excellent accuracy
+
+### Example 3.2:
+$$u(x_1, x_2) = x_1^2 x_2^2 (1-x_1)^2 (1-x_2)^2$$
+
+- Complex polynomial with very small functional range (max ≈ $2.5 \times 10^{-4}$), challenging for neural networks.
+- Challenging for neural networks due to scale.
+- DRM outperforms PINNs in L² norm, while PINNs excel in higher-order derivatives.
+
 
 ## Phase I: PINNs Implementation
 
@@ -42,15 +57,10 @@ The PINN approach directly minimizes the PDE residual at collocation points:
 
 $$\mathcal{L} = \mathcal{L}_{\text{PDE}} + \lambda_{\text{dir}} \mathcal{L}_{\text{Dirichlet}} + \lambda_{\text{neu}} \mathcal{L}_{\text{Neumann}}$$
 
-where:
-- $\mathcal{L}_{\text{PDE}} = \text{MSE}(\Delta^2 u_\theta - f)$ at interior points
-- $\mathcal{L}_{\text{Dirichlet}} = \text{MSE}(u_\theta - g_1)$ at boundary points
-- $\mathcal{L}_{\text{Neumann}} = \text{MSE}(\frac{\partial^2 u_\theta}{\partial n^2} - g_2)$ at boundary points
-
 ### Network Architecture
 
 **Feed-Forward Neural Network**:
-- **Input Layer**: 2 neurons $(x, y)$ coordinates
+- **Input Layer**    : 2 neurons $(x, y)$ coordinates
 - **Hidden Layers**: 4 layers × 50 neurons each
 - **Output Layer**: 1 neuron (solution $u$)
 - **Activation Function**: Tanh (smooth derivatives for high-order PDEs)
@@ -89,10 +99,10 @@ where:
 
 ### Phase I Results
 
-| Example | L² Error | H¹ Error | H² Error | Training Time | Final Loss |
-|---------|----------|----------|----------|---------------|------------|
-| 3.1     | 1.93e-03 | 3.69e-03 | 6.55e-03 | 3,466 s (~58 min) | 9.90e-05 |
-| 3.2     | 2.07e-01 | 3.50e-01 | 3.55e-01 | 3,677 s (~61 min) | 2.88e-03 |
+| Example | L² Error | H¹ Error | H² Error | Final Loss |
+|---------|----------|----------|----------|------------|
+| 3.1     | 1.93e-03 | 3.69e-03 | 6.55e-03 | 9.90e-05 	|
+| 3.2     | 2.07e-01 | 3.50e-01 | 3.55e-01 | 2.88e-03 	|
 
 **Note**: Example 3.2 shows higher errors due to its complex polynomial structure $u \sim x^2 y^2 (1-x)^2 (1-y)^2$ with a very small functional range near zero, making it challenging for neural network approximation.
 
@@ -117,20 +127,6 @@ Phase II implements a variational energy minimization approach with U-shaped neu
 - Hard constraint at center point $(0.5, 0.5)$ was imposed to help the network understand the functional range
 - DRM achieved superior L² accuracy on Example 3.2 compared to PINNs
 - Training time: 3-4 hours on GPU
-
-## Test Examples
-
-### Example 3.1:
-$$u(x_1, x_2) = \frac{1}{2\pi^2} \sin(\pi x_1) \sin(\pi x_2)$$
-- Smooth sinusoidal solution with well-behaved derivatives and functional range.
-- Both PINNs and DRM achieve excellent accuracy
-
-### Example 3.2:
-$$u(x_1, x_2) = x_1^2 x_2^2 (1-x_1)^2 (1-x_2)^2$$
-
-- Complex polynomial with very small functional range (max ≈ $2.5 \times 10^{-4}$), challenging for neural networks.
-- Challenging for neural networks due to scale.
-- DRM outperforms PINNs in L² norm, while PINNs excel in higher-order derivatives.
 
 ## Project Structure
 
@@ -199,35 +195,24 @@ jupyter notebook Example3.1DRM.ipynb
 
 **Dependencies**: `torch`, `numpy`, `scipy`, `matplotlib`, `sympy` (see `requirements.txt`)
 
-## Results Summary
 
-| Method | Example | L² Error | H¹ Error | H² Error | Time (GPU) |
-|--------|---------|----------|----------|----------|------------|
-| **PINNs** | 3.1 | **1.93e-03** | **3.69e-03** | **6.55e-03** | ~1 hour |
-| **DRM**   | 3.1 | 2.13e-03 | 9.16e-02 | 1.11e-01 | ~4 hours |
-| **PINNs** | 3.2 | 2.07e-01 | 3.50e-01 | 3.55e-01 | ~1 hour |
-| **DRM**   | 3.2 | **5.97e-04** | 5.05e-01 | 8.46e-01 | ~3 hours |
-
-**Key Observations**:
-- PINNs: Faster training, better on smooth solutions (Example 3.1), superior higher-order derivatives
-- DRM: Better L² accuracy on complex polynomials (Example 3.2), principled variational framework
-- Example 3.2's tiny functional range challenges both methods
 
 **Generated Outputs** (in `final/results_Example*/` and `DRMFinal/checkpoints/`):
 - Solution comparison plots, 3D visualizations, loss history, training logs, pre-trained models
 
 ## Team
 
-**Group 2** - Deep Learning for Differential Equations
+**Group 2** - Deep Learning for Differential Equations Course
 
 **Contributors**:
-- [AshutoshKumar1007](https://github.com/AshutoshKumar1007)
-- [c0mpl1cat3d1](https://github.com/c0mpl1cat3d1)
-- [varshini1782006](https://github.com/varshini1782006)
-- [jainsarthak0205](https://github.com/jainsarthak0205)
-- [Gowravsharma](https://github.com/Gowravsharma)
-- [Gouse2005](https://github.com/Gouse2005)	
-- [--- IGNORE ---](--- IGNORE ---)
+- [Dr. Ramesh Chandra Sau](https://github.com/rcs1994) - Course Instructor & Project Mentor
+- [Sadu Varshini](https://github.com/varshini1782006)
+- [Ashutosh Kumar](https://github.com/AshutoshKumar1007)
+- [Sarthak Jain](https://github.com/jainsarthak0205)
+- [Suraj Kumar](https://github.com/c0mpl1cat3d1)
+- [Gowrav Sharma](https://github.com/Gowravsharma)
+- [Patan Gouse](https://github.com/Gouse2005)
+
 
 ## License
 
